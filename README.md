@@ -9,3 +9,8 @@
 - lombok 1.16.12
 - junit 4.12
 - 本地tomcat容器 8.5.24
+
+# Changelog
+[Learn about the latest improvements][changelog].
+
+[changelog]: https://github.com/scutuyu/awesome-dispatcher-servlet/blob/master/CHANGELOG.md
