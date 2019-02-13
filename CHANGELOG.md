@@ -10,6 +10,7 @@
 ### Features
 
 * **annotation,common,controller,util:** add a basic util tools class ([4bbac54](https://github.com/scutuyu/awesome-dispatcher-servlet/commit/4bbac54))
+* **DispatcherServlet.java:** 新增特性，DispatcherServlet拦截所有的请求，并分发 ([ac69ebb](https://github.com/scutuyu/awesome-dispatcher-servlet/commit/ac69ebb))
 
 
 
