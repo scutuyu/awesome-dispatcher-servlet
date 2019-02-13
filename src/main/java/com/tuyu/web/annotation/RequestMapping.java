@@ -16,7 +16,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface RequestMapping {
 
+    /**
+     * @return 映射路径
+     */
     String value();
 
+    /**
+     * @return 请求的方法
+     */
     RequestMethod method() default RequestMethod.GET;
 }
