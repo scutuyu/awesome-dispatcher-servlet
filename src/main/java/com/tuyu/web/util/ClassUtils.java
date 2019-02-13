@@ -3,12 +3,9 @@ package com.tuyu.web.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
-
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -24,7 +21,6 @@ import java.util.Set;
 public class ClassUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassUtils.class);
-//    private static final Logger logger = LogManager.getLogger();
 
     private static final String BASE_PACKAGE_NAME = "com.tuyu.web";
 
@@ -34,7 +30,7 @@ public class ClassUtils {
      * ClassUtils类初始化时扫描默认包下的所有类
      */
     static {
-        loadClasses(BASE_PACKAGE_NAME);
+        scanPackage(BASE_PACKAGE_NAME);
     }
 
     /**
@@ -44,17 +40,20 @@ public class ClassUtils {
      *
      * @return
      */
-    private static void loadClasses(String packageName) {
+    private static void scanPackage(String packageName) {
         Assert.notEmpty(packageName, "初始化ClassUtils类扫描包时，包名不能为空");
         String basePath = packageName.replace(".", "/");
         try {
-            Enumeration<URL> systemResources = ClassLoader.getSystemResources(basePath);
+//            Enumeration<URL> systemResources = ClassLoader.getSystemResources(basePath);
+            Enumeration<URL> systemResources = getClassLoader().getResources(basePath);
             while (systemResources.hasMoreElements()) {
                 URL url = systemResources.nextElement();
 
                 File file = new File(url.getFile());
-                logger.info("{}", file.exists());
-                logger.info("{}", file.isDirectory());
+                File[] files = file.listFiles();
+                for (File f : files) {
+                    loadClass(packageName, f, CLASS_SET);
+                }
             }
         } catch (IOException e) {
             logger.error("无法扫描指定的包：{}", packageName, e);
@@ -62,9 +61,41 @@ public class ClassUtils {
 
     }
 
-    public static Set<Class<?>> getClassByAnnotation(Class<?> annotation) {
-        Set<Class<?>> set = new HashSet<Class<?>>();
+    private static ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
 
+    private static void loadClass(String pkn, File file, Set<Class<?>> set) {
+        if (file != null && file.exists()) {
+            if (file.isDirectory()) {
+                String subName = file.getName();
+                File[] files = file.listFiles();
+                for (File f : files) {
+                    loadClass(pkn + "." + subName, f, set);
+                }
+            } else if (file.isFile() && isClassFile(file.getName())) {
+                String name = pkn + "." + file.getName();
+                try {
+                    Class<?> c = Class.forName(name.substring(0, name.indexOf(".class")), true, getClassLoader());
+                    set.add(c);
+                } catch (ClassNotFoundException e) {
+                    logger.error("加载类: {} 失败", name, e);
+                }
+            }
+        }
+    }
+
+    private static boolean isClassFile(String fileName) {
+        return fileName.indexOf(".class") != -1;
+    }
+
+    public static Set<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotation) {
+        Set<Class<?>> set = new HashSet<Class<?>>();
+        for (Class<?> cl : CLASS_SET) {
+            if (cl.isAnnotationPresent(annotation)) {
+                set.add(cl);
+            }
+        }
         return set;
     }
 }

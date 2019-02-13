@@ -25,7 +25,7 @@ public class ReturnUtils {
         ReturnData<T> returnData = new ReturnData<T>();
         returnData.setCode(SUCCESS.getCode());
         returnData.setMsg(SUCCESS.getMsg());
-        return null;
+        return returnData;
     }
 
     /**
