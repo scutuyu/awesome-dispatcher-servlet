@@ -10,19 +10,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 自己实现的前置控制器
+ *
  * @author tuyu
  * @date 2/13/19
  * Talk is cheap, show me the code.
@@ -105,6 +108,20 @@ public class DispatcherServlet extends HttpServlet{
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String method = req.getMethod();
         String requestURI = req.getRequestURI();
+        if (requestURI.equals("/")) {
+            URL resource = this.getClass().getClassLoader().getResource("../../index.html");
+            File file = new File(resource.getFile());
+            FileInputStream inputStream = new FileInputStream(file);
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            ServletOutputStream outputStream = resp.getOutputStream();
+            outputStream.write(bytes);
+            inputStream.close();
+            outputStream.flush();
+            outputStream.close();
+            return;
+        }
+
         RequestHandler handler = requestHandlerMap.get(requestURI);
         resp.setCharacterEncoding("UTF-8");
         if (handler != null && methodEquals(method, handler.getRequestMethod())) {
