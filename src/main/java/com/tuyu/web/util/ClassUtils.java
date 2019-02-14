@@ -44,6 +44,8 @@ public class ClassUtils {
         Assert.notEmpty(packageName, "初始化ClassUtils类扫描包时，包名不能为空");
         String basePath = packageName.replace(".", "/");
         try {
+            // 不要像注释中那样加载资源，在Tomcat服务器中会有问题，因为在tomcat服务器中的类加载器是ParallelWebAppClassLoader,
+            // 它只能加载指定路径下的类，如果用ClassLoader.getSystemResources("com/tuyu/web")会找不到资源
 //            Enumeration<URL> systemResources = ClassLoader.getSystemResources(basePath);
             Enumeration<URL> systemResources = getClassLoader().getResources(basePath);
             while (systemResources.hasMoreElements()) {
@@ -61,10 +63,20 @@ public class ClassUtils {
 
     }
 
+    /**
+     * @return 返回当前线程的上下文类加载器
+     */
     private static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
+    /**
+     * 递归地加载类，并加加载好的类缓存在set集合中
+     *
+     * @param pkn 包名
+     * @param file 类文件
+     * @param set 缓存类的集合
+     */
     private static void loadClass(String pkn, File file, Set<Class<?>> set) {
         if (file != null && file.exists()) {
             if (file.isDirectory()) {
@@ -85,10 +97,23 @@ public class ClassUtils {
         }
     }
 
+    /**
+     * 通过文件名判断文件是否为.class文件
+     * @param fileName 文件名
+     *
+     * @return
+     */
     private static boolean isClassFile(String fileName) {
         return fileName.indexOf(".class") != -1;
     }
 
+    /**
+     * 获取指定包路径下所有被指定注解注释的类
+     *
+     * @param annotation 注解
+     *
+     * @return
+     */
     public static Set<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotation) {
         Set<Class<?>> set = new HashSet<Class<?>>();
         for (Class<?> cl : CLASS_SET) {

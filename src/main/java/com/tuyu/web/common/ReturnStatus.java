@@ -18,7 +18,13 @@ public enum ReturnStatus {
     ;
 
 
+    /**
+     * 状态码
+     */
     private String code;
+    /**
+     * 提示消息
+     */
     private String msg;
 
     ReturnStatus(String code, String msg) {
