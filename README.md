@@ -28,8 +28,8 @@
 [Learn about the latest improvements][changelog].
 
 [changelog]: https://github.com/scutuyu/awesome-dispatcher-servlet/blob/master/CHANGELOG.md
-[tomcat_config1]: htts://github.com/scutuyu/awesome-dispatcher-servlet/master/images/tomcat_config1.png
-[tomcat_config2]: htts://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_config2.png
-[tomcat_run]: htts://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_run.png
-[demo_index]: htts://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/demo_index.png
-[demo_user_tuyu]: htts://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/demo_user_tuyu.png
+[tomcat_config1]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_config1.png
+[tomcat_config2]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_config2.png
+[tomcat_run]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_run.png
+[demo_index]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/demo_index.png
+[demo_user_tuyu]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/demo_user_tuyu.png
