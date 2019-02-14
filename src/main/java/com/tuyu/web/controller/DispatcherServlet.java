@@ -25,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 自己实现的前置控制器
+ * <p>
+ *     拦截所有请求(/*)，将请求分发给具体的处理器处理，将返回的数据简单处理后响应请求
+ * </p>
  *
  * @author tuyu
  * @date 2/13/19
@@ -35,14 +38,24 @@ public class DispatcherServlet extends HttpServlet{
 
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    /**
+     * 缓存处理器信息的map，key为请求URI，value为处理该请求的处理器信息（com.tuyu.web.support.RequestHandler）
+     */
     private static Map<String, RequestHandler<?>> requestHandlerMap = new ConcurrentHashMap<>(10);
 
+    /**
+     * servlet初始化方法，会初始化requestHandlerMap
+     * @exception ServletException
+     */
     @Override
     public void init() throws ServletException {
         super.init();
         initDispatcherServlet();
     }
 
+    /**
+     * DispatcherServlet具体的初始化逻辑
+     */
     private void initDispatcherServlet() {
         final Class<RequestMapping> requestMappingClass = RequestMapping.class;
         Set<Class<?>> set = ClassUtils.getClassByAnnotation(requestMappingClass);
@@ -68,6 +81,14 @@ public class DispatcherServlet extends HttpServlet{
         }
     }
 
+    /**
+     * 合并URI
+     *
+     * @param firstUri 处理器类上的RequestMapping配置的URI
+     * @param secondUri 处理器方法上的RequestMapping配置的URI
+     *
+     * @return
+     */
     private String combineUri(String firstUri, String secondUri) {
         final String uriSeparator = "/";
         if (StringUtils.isEmpty(firstUri)) {
@@ -94,6 +115,18 @@ public class DispatcherServlet extends HttpServlet{
         return uri;
     }
 
+    /**
+     * 根据处理器信息创建一个RequestHandler对象，即封装处理器信息
+     * @param clazz
+     * @param method
+     * @param requestMapping
+     * @param <T>
+     *
+     * @return
+     *
+     * @exception IllegalAccessException
+     * @exception InstantiationException
+     */
     private <T> RequestHandler<T> createRequestHandler(Class<T> clazz, Method method,RequestMapping requestMapping) throws IllegalAccessException, InstantiationException {
         RequestHandler<T> handler = new RequestHandler<>();
         handler.setUri(requestMapping.value());
@@ -104,6 +137,15 @@ public class DispatcherServlet extends HttpServlet{
         return handler;
     }
 
+    /**
+     * 具体的请求分发逻辑
+     *
+     * @param req
+     * @param resp
+     *
+     * @exception ServletException
+     * @exception IOException
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String method = req.getMethod();
@@ -143,6 +185,14 @@ public class DispatcherServlet extends HttpServlet{
         }
     }
 
+    /**
+     * 判断request请求的方法是否与RequestHandler中封装的方法相等
+     *
+     * @param method
+     * @param requestMethod
+     *
+     * @return
+     */
     private boolean methodEquals(String method, RequestMethod requestMethod) {
         if (method == null || requestMethod == null) {
             return false;
