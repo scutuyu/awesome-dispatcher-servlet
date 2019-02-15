@@ -32,7 +32,7 @@
 
 [link_changelog]: https://github.com/scutuyu/awesome-dispatcher-servlet/blob/master/CHANGELOG.md
 
-[img_tomcat_config1]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_config1.png
+[img_tomcat_config1]: https://github.com/scutuyu/awesome-dispatcher-servlet/blob/master/images/tomcat_config1.png
 [img_tomcat_config2]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_config2.png
 [img_tomcat_run]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_run.png
 [img_demo_index]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/demo_index.png
