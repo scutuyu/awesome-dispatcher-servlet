@@ -11,6 +11,10 @@
 - junit 4.12
 - 本地tomcat容器 8.5.24
 
+# 项目分解
+
+详情在[这里][link_blog]
+
 # Demonstration-演示
 ## 配置本地Tomcat容器，并运行Tomcat服务器
 
@@ -31,6 +35,7 @@
 [Learn about the latest improvements][link_changelog].
 
 [link_changelog]: https://github.com/scutuyu/awesome-dispatcher-servlet/blob/master/CHANGELOG.md
+[link_blog]: https://scutuyu.github.io/2019/02/16/awesome-dispatcher-servlet/#more
 
 [img_tomcat_config1]: https://github.com/scutuyu/awesome-dispatcher-servlet/blob/master/images/tomcat_config1.png
 [img_tomcat_config2]: https://github.com/scutuyu/awesome-dispatcher-servlet/raw/master/images/tomcat_config2.png
