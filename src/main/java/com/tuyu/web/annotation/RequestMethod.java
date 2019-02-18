@@ -11,4 +11,18 @@ public enum RequestMethod {
 
     GET, POST;
 
+    /**
+     * 判断请求方法是否相等
+     *
+     * @param method
+     * @param requestMethod
+     *
+     * @return
+     */
+    public static boolean methodEquals(String method, RequestMethod requestMethod) {
+        if (method == null || requestMethod == null) {
+            return false;
+        }
+        return method.equalsIgnoreCase(requestMethod.toString());
+    }
 }

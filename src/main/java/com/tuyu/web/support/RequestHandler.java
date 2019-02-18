@@ -1,5 +1,6 @@
 package com.tuyu.web.support;
 
+import com.tuyu.web.annotation.RequestMapping;
 import com.tuyu.web.annotation.RequestMethod;
 import lombok.Data;
 
@@ -35,6 +36,28 @@ public class RequestHandler<T> {
      * 处理器实例
      */
     private T handler;
+
+    /**
+     * 根据处理器信息创建一个RequestHandler对象，即封装处理器信息
+     * @param clazz
+     * @param method
+     * @param requestMapping
+     * @param <T>
+     *
+     * @return
+     *
+     * @exception IllegalAccessException
+     * @exception InstantiationException
+     */
+    public static <T> RequestHandler<T> createRequestHandler(Class<T> clazz, Method method,RequestMapping requestMapping) throws IllegalAccessException, InstantiationException {
+        RequestHandler<T> handler = new RequestHandler<>();
+        handler.setUri(requestMapping.value());
+        handler.setHandlerClass(clazz);
+        handler.setRequestMethod(requestMapping.method());
+        handler.setMethod(method);
+        handler.setHandler((T) clazz.newInstance());
+        return handler;
+    }
 
     /**
      * 通过反射调用处理器实例的相应方法，即处理请求
