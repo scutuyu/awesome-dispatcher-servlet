@@ -2,6 +2,7 @@ package com.tuyu.web.servlet;
 
 import com.tuyu.web.annotation.RequestMapping;
 import com.tuyu.web.annotation.RequestMethod;
+import com.tuyu.web.servlet.support.DataBinder;
 import com.tuyu.web.support.RequestHandler;
 import com.tuyu.web.util.ClassUtils;
 import com.tuyu.web.util.JsonUtils;
@@ -96,9 +97,8 @@ public class DispatcherServlet extends HttpServlet{
      */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String method = req.getMethod();
-        String requestURI = req.getRequestURI();
-        if (requestURI.equals("/")) {
+        // 处理静态资源（首页，根目录）
+        if (req.getRequestURI().equals("/")) {
             URL resource = this.getClass().getClassLoader().getResource("../../index.html");
             File file = new File(resource.getFile());
             FileInputStream inputStream = new FileInputStream(file);
@@ -111,25 +111,57 @@ public class DispatcherServlet extends HttpServlet{
             outputStream.close();
             return;
         }
+        // 请求分发
+        doDispatch(req, resp);
 
-        RequestHandler handler = requestHandlerMap.get(requestURI);
-        resp.setCharacterEncoding("UTF-8");
-        if (handler != null && RequestMethod.methodEquals(method, handler.getRequestMethod())) {
-            try {
-                Object handle = handler.handle(new Object[0]);
-                String characterEncoding = resp.getCharacterEncoding();
-                System.out.println(characterEncoding);
-                PrintWriter writer = resp.getWriter();
-                String data = JsonUtils.Object2JsonString(handle);
-                logger.info(data);
-                writer.write(data);
-                writer.flush();
-            } catch (Exception e) {
-                logger.error("调用{}类的{}方法失败", handler.getHandlerClass().getName(), handler.getMethod().getName(), e);
-                throw new RuntimeException("servlet 异常");
-            }
-        } else {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+    }
+
+    /**
+     * 过滤静态资源请求后，执行真正的请求分发
+     *
+     * @param request
+     * @param response
+     */
+    protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Type", "application/json");
+        // 获取handler
+        RequestHandler handler = getRequestHandler(request.getRequestURI());
+        if (handler == null || !RequestMethod.methodEquals(request.getMethod(), handler.getRequestMethod())) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+
+        // 绑定参数 TODO:
+        DataBinder dataBinder = new DataBinder(handler.getMethod(), request);
+        Object[] params = dataBinder.getParams();
+
+        try {
+            // 反射调用处理器方法
+            Object handle = handler.handle(params);
+            PrintWriter writer = response.getWriter();
+            String data = JsonUtils.Object2JsonString(handle);
+            logger.info(data);
+            writer.write(data);
+            writer.flush();
+        } catch (Exception e) {
+            logger.error("调用{}类的{}方法失败", handler.getHandlerClass().getName(), handler.getMethod().getName(), e);
+            throw new RuntimeException("servlet 异常");
+        }
+    }
+
+    /**
+     * 根据请求uri查询对应的处理器
+     * <p>
+     *     暂时不支持路径参数，以后会支持
+     * </p>
+     *
+     * @param reqRui 请求的URI
+     *
+     * @return
+     */
+    private RequestHandler<?> getRequestHandler(String reqRui) {
+        RequestHandler<?> rh = requestHandlerMap.get(reqRui);
+        return rh;
     }
 }

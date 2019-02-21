@@ -35,4 +35,26 @@ public class ArrayUtils {
     public static <T> boolean isNotEmpty(T[] arr) {
         return !isEmpty(arr);
     }
+
+    /**
+     * 合并两个数组的数据，返回一个新的数组
+     *
+     * @param arr1
+     * @param arr2
+     * @param <T>
+     *
+     * @return
+     */
+    public static <T> T[] combine(T[] arr1, T[] arr2) {
+        if (arr1 == null || arr1.length == 0) {
+            return arr2;
+        } else if (arr2 == null || arr2.length == 0) {
+            return arr1;
+        } else {
+            T[] result = (T[]) new Object[arr1.length + arr2.length];
+            System.arraycopy(arr1, 0, result, 0, arr1.length);
+            System.arraycopy(arr2, 0, result, arr1.length, arr2.length);
+            return result;
+        }
+    }
 }

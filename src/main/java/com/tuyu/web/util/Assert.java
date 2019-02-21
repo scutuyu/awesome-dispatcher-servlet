@@ -47,4 +47,16 @@ public abstract class Assert {
             throw new IllegalArgumentException(msg);
         }
     }
+
+    /**
+     * 断言对象不为null，如果为null则抛出非法参数异常
+     *
+     * @param obj
+     * @param msg
+     */
+    public static void notNull(Object obj, String msg) {
+        if (obj == null) {
+            throw new IllegalArgumentException(msg);
+        }
+    }
 }

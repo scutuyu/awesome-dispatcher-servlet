@@ -62,6 +62,12 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArgs>
+                        <!-- java8 新特性，将方法参数名记录在class文件中 -->
+                        <arg>
+                             -parameters
+                        </arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
